@@ -2,6 +2,8 @@ package com.omid.foodservice.food;
 
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ public class FoodService {
     private final FoodRepository foodRepository;
     private final QFood qFood=QFood.food;
 
+    @CacheEvict(value = "all-food", allEntries = true)
     public Food createFood(Food food){
         return foodRepository.save(food);
     }
@@ -22,6 +25,7 @@ public class FoodService {
         return foodRepository.getFoodById(id);
     }
 
+    @CacheEvict(value = "all-food", allEntries = true)
     public Food updateFood(String id, Food food){
         Food dbFood=loadOneFood(id);
         if(food.getTitle()!=null){
@@ -46,6 +50,7 @@ public class FoodService {
         return foodRepository.saveAndFlush(dbFood);
     }
 
+    @Cacheable(value = "all-food")
     public List<Food> loadAllFood(){
         return foodRepository.findAll();
     }

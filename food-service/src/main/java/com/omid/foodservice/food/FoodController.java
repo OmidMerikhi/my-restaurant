@@ -12,15 +12,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FoodController {
     private final FoodService foodService;
+    private final FoodMapper foodMapper;
 
     @GetMapping
-    public List<Food> loadAll(){
-        return foodService.loadAllFood();
+    public List<FoodDto> loadAll(){
+        return foodMapper.toViewModel(foodService.loadAllFood());
     }
 
     @GetMapping("/{id}")
-    public Food loadOne(@PathVariable("id") String id){
-        return foodService.loadOneFood(id);
+    public FoodDto loadOne(@PathVariable("id") String id){
+        return foodMapper.toViewModel(foodService.loadOneFood(id));
     }
 
     @GetMapping("/search")
@@ -29,13 +30,13 @@ public class FoodController {
     }
 
     @PostMapping
-    public Food create(@RequestBody Food food){
-        return foodService.createFood(food);
+    public FoodDto create(@RequestBody FoodDto foodDto){
+        return foodMapper.toViewModel(foodService.createFood(foodMapper.toEntity(foodDto)));
     }
 
     @PutMapping("/{id}")
-    public Food update(@PathVariable("id") String id,@RequestBody Food food){
-        return foodService.updateFood(id,food);
+    public FoodDto update(@PathVariable("id") String id,@RequestBody FoodDto foodDto){
+        return foodMapper.toViewModel(foodService.updateFood(id,foodMapper.toEntity(foodDto)));
     }
 
 }
