@@ -1,4 +1,4 @@
-package com.omid.foodservice.tools;
+package com.omid.employeeservice.tools;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -12,13 +12,11 @@ import java.time.Duration;
 @EnableCaching
 @Configuration
 public class CacheConfiguration {
-    private final String PREFIX = "food";
-
     @Bean
     public RedisCacheConfiguration configuration() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                .prefixCacheNameWith(PREFIX + "--")
+                .entryTtl(Duration.ofDays(1))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofDays(1));
+                .prefixCacheNameWith("chef__");
     }
 }

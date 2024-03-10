@@ -8,14 +8,16 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
-        <module name="eureka-server" />
         <module name="food-service" />
+        <module name="eureka-server" />
+        <module name="employee-service" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="config-server" options="-parameters" />
+      <module name="employee-service" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="food-service" options="-parameters" />
     </option>
