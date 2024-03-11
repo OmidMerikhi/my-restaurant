@@ -1,0 +1,31 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: restaurant-client-service
+  config:
+    import: optional:configserver:http://localhost:8888
+#  data:
+#    mongodb:
+#      authentication-database: admin
+#      database: my_restaurant
+#      host: localhost
+#      port: 27017
+#    redis:
+#      database: 1
+#      host: localhost
+#      port: 6379
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: validate
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLDialect
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/my_restaurant_client
+#    username: omid
+#    password: omid@1999
+#  flyway:
+#    enabled: true
