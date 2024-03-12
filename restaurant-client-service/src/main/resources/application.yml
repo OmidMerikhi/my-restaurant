@@ -5,6 +5,10 @@ spring:
     name: restaurant-client-service
   config:
     import: optional:configserver:http://localhost:8888
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
 #  data:
 #    mongodb:
 #      authentication-database: admin

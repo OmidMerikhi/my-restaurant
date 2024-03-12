@@ -3,11 +3,13 @@ package com.omid.restaurantclientservice;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "food-service", path = "/api/foods")
+@Service
+@FeignClient(name = "food-service", path = "/api/foods", fallback = FoodFallback.class)
 public interface FoodClientService {
     @GetMapping
     List<Food> loadAllFood();

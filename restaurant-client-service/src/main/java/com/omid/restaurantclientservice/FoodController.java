@@ -1,6 +1,7 @@
 package com.omid.restaurantclientservice;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +13,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FoodController {
     private final FoodClientService foodClientService;
+    private final Environment env;
 
     @GetMapping
     public List<Food> loadAll() {
+        System.out.println(env.getProperty("local.server.port"));
         return foodClientService.loadAllFood();
     }
 
