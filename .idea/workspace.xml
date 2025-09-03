@@ -22,7 +22,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="develop" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -59,7 +59,6 @@
     "Spring Boot.ConfigServerApplication.executor": "Debug",
     "Spring Boot.EurekaServerApplication.executor": "Debug",
     "Spring Boot.FoodServiceApplication.executor": "Debug",
-    "git-widget-placeholder": "develop",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/omid/tamrins/my-restaurant/food-service",
     "node.js.detected.package.eslint": "true",
@@ -126,7 +125,7 @@
       <updated>1756800836804</updated>
       <workItem from="1756800837854" duration="4972000" />
       <workItem from="1756806583539" duration="2958000" />
-      <workItem from="1756870224500" duration="17041000" />
+      <workItem from="1756870224500" duration="17957000" />
     </task>
     <task id="LOCAL-00001" summary="edit in develop">
       <option name="closed" value="true" />

@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: /home/omid/tamrins/external-config/my-restaurant
+server:
+  port: 8888
