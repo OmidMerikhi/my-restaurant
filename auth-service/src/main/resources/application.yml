@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: auth-service
+  config:
+    import: optional:configserver:http://localhost:8888
+server:
+  port: 9090
+
+app:
+  security:
+    issuer: ${spring.application.name}
+    expire: 36000
+    secret-key: my name is omid:)
