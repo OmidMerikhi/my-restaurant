@@ -23,12 +23,14 @@ public class AuthorizeFilter extends OncePerRequestFilter {
 
     private void doBefore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!request.getRequestURI().equals("/api/auth")) {
+
             AntPathMatcher matcher = new AntPathMatcher();
             String urlPath = request.getRequestURI();
             String methodeType = "_" + request.getMethod().toLowerCase() + "_";
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             var authorities = auth.getAuthorities().stream().toList();
             AtomicBoolean ok = new AtomicBoolean(false);
+
             authorities.forEach(a-> {
                 String mainAuthority = a.getAuthority().substring(a.getAuthority().indexOf("/api"));
                 if (matcher.match(mainAuthority,urlPath) && a.getAuthority().contains(methodeType)) {

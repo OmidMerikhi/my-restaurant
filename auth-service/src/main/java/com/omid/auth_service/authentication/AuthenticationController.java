@@ -22,6 +22,7 @@ public class AuthenticationController {
     public String login(@RequestParam("username") String username,
                         @RequestParam("password") String password) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
         return jwtHandler.generateToken(authentication.getName(),
                 authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
     }

@@ -11,3 +11,9 @@ spring:
               lower-case-service-id: true
 server:
   port: 8083
+
+app:
+  security:
+    issuer: ${spring.application.name}
+    expire: 36000
+    secret-key: my name is omid:)
