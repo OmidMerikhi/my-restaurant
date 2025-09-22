@@ -9,6 +9,11 @@ spring:
             locator:
               enabled: true
               lower-case-service-id: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: my-name-is-omid
 server:
   port: 8083
 
@@ -16,4 +21,4 @@ app:
   security:
     issuer: ${spring.application.name}
     expire: 36000
-    secret-key: my name is omid:)
+#    secret-key: my name is omid:)

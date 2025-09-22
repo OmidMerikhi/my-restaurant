@@ -1,35 +1,32 @@
 package com.omid.auth_service;
 
-import com.omid.auth_service.authority.Authority;
-import com.omid.auth_service.authority.AuthorityService;
+//import com.omid.auth_service.jwt.AuthorizeFilter;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.omid.auth_service.jwt.AuthorizeFilter;
 import com.omid.auth_service.jwt.JwtAuthenticationFilter;
-import com.omid.auth_service.jwt.JwtHandler;
-import com.omid.auth_service.role.Role;
-import com.omid.auth_service.role.RoleService;
-import com.omid.auth_service.user.User;
 import com.omid.auth_service.user.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.converter.RsaKeyConverters;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
+import com.nimbusds.jose.jwk.*;
 
-import java.util.Set;
+import java.io.InputStream;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @RequiredArgsConstructor
@@ -39,6 +36,9 @@ import java.util.Set;
 public class SecurityConfig {
     private final JwtAuthenticationFilter authenticationFilter;
     private final AuthorizeFilter authorizeFilter;
+
+    private final RSAPublicKey publicKey;
+    private final RSAPrivateKey privateKey;
 //    @Bean
 //    public CommandLineRunner commandLineRunner(AuthorityService authorityService, RoleService roleService, UserService userService) {
 //        return args -> {
@@ -78,12 +78,27 @@ public class SecurityConfig {
         security.addFilterAfter(authorizeFilter, JwtAuthenticationFilter.class);
         security.authorizeHttpRequests(m-> {
            m.requestMatchers("/api/auth").permitAll();
-           m.requestMatchers("/api/test/hi").hasAuthority("insert").requestMatchers("/api/test/hi").permitAll();
-           m.requestMatchers("/api/test/hello").hasAuthority("select").requestMatchers("/api/test/hello").permitAll();
+           m.requestMatchers("/api/auth/oauth2/jwks").permitAll();
+//           m.requestMatchers("/api/test/hi").hasAuthority("insert").requestMatchers("/api/test/hi").permitAll();
+//           m.requestMatchers("/api/test/hello").hasAuthority("select").requestMatchers("/api/test/hello").permitAll();
            m.anyRequest().authenticated();
         });
         return security.build();
     }
+
+    @Bean
+    public RSAKey rsaKey() {
+        return new RSAKey.Builder(publicKey)
+                .privateKey(privateKey)
+                .keyID("my-name-is-omid")
+                .build();
+    }
+
+    @Bean
+    public JWKSet jwkSet(RSAKey rsaKey) {
+        return new JWKSet(rsaKey);
+    }
+
 
 
 }

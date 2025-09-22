@@ -6,8 +6,14 @@ spring:
 server:
   port: 9090
 
+#app:
+#  security:
+#    issuer: ${spring.application.name}
+#    expire: 36000
+#    secret-key: my-name-is-omid
 app:
   security:
     issuer: ${spring.application.name}
-    expire: 36000
-    secret-key: my name is omid:)
+    expire: 3600000  # 1 ساعت
+    privateKeyPath: keys/private_key.pem
+    publicKeyPath: keys/public_key.pem

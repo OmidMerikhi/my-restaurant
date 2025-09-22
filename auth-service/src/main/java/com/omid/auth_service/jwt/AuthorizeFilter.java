@@ -22,7 +22,7 @@ public class AuthorizeFilter extends OncePerRequestFilter {
     }
 
     private void doBefore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!request.getRequestURI().equals("/api/auth")) {
+        if (!request.getRequestURI().equals("/api/auth") && !request.getRequestURI().equals("/api/auth/oauth2/jwks")) {
 
             AntPathMatcher matcher = new AntPathMatcher();
             String urlPath = request.getRequestURI();
@@ -46,6 +46,11 @@ public class AuthorizeFilter extends OncePerRequestFilter {
                 throw new ServletException("not accessable!");
             }
 
+        }
+
+        if (request.getRequestURI().equals("/api/auth/oauth2/jwks")) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
     }
 }
