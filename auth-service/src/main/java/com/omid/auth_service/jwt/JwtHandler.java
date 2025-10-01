@@ -31,8 +31,8 @@ public class JwtHandler {
 
     private String issuer;
     private long expire;
-    private String privateKeyPath;
-    private String publicKeyPath;
+//    private String privateKeyPath;
+//    private String publicKeyPath;
 
     @Autowired
     private RSAPrivateKey privateKey;
