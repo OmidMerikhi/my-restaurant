@@ -2,10 +2,16 @@ package com.omid.auth_service;
 
 //import com.omid.auth_service.jwt.AuthorizeFilter;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.omid.auth_service.authority.Authority;
+import com.omid.auth_service.authority.AuthorityService;
 import com.omid.auth_service.jwt.AuthorizeFilter;
 import com.omid.auth_service.jwt.JwtAuthenticationFilter;
+import com.omid.auth_service.role.Role;
+import com.omid.auth_service.role.RoleService;
+import com.omid.auth_service.user.User;
 import com.omid.auth_service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -27,6 +33,7 @@ import java.security.KeyPairGenerator;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
@@ -42,8 +49,8 @@ public class SecurityConfig {
 //    @Bean
 //    public CommandLineRunner commandLineRunner(AuthorityService authorityService, RoleService roleService, UserService userService) {
 //        return args -> {
-//            var a1 = new Authority("select");
-//            var a2 = new Authority("insert");
+//            var a1 = new Authority("my_restaurant__get_/api/foods");
+//            var a2 = new Authority("my_restaurant__get_/api/foods/{id}");
 //            authorityService.create(a1);
 //            authorityService.create(a2);
 //            //--------------------------------------
@@ -58,12 +65,12 @@ public class SecurityConfig {
 //            userService.create(u2);
 //        };
 //    }
-
+//
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+//
     @Bean
     public AuthenticationManager authenticationManager(UserService userService) {
         var provider = new DaoAuthenticationProvider(userService);
@@ -77,8 +84,7 @@ public class SecurityConfig {
         security.addFilterAfter(authenticationFilter, ExceptionTranslationFilter.class);
         security.addFilterAfter(authorizeFilter, JwtAuthenticationFilter.class);
         security.authorizeHttpRequests(m-> {
-           m.requestMatchers("/api/auth").permitAll();
-           m.requestMatchers("/api/auth/oauth2/jwks").permitAll();
+           m.requestMatchers("/api/auth", "/api/auth/oauth2/jwks", "/api/auth/refresh").permitAll();
 //           m.requestMatchers("/api/test/hi").hasAuthority("insert").requestMatchers("/api/test/hi").permitAll();
 //           m.requestMatchers("/api/test/hello").hasAuthority("select").requestMatchers("/api/test/hello").permitAll();
            m.anyRequest().authenticated();

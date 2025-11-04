@@ -22,31 +22,31 @@ public class AuthorizeFilter extends OncePerRequestFilter {
     }
 
     private void doBefore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!request.getRequestURI().equals("/api/auth") && !request.getRequestURI().equals("/api/auth/oauth2/jwks")) {
-
-            AntPathMatcher matcher = new AntPathMatcher();
-            String urlPath = request.getRequestURI();
-            String methodeType = "_" + request.getMethod().toLowerCase() + "_";
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            var authorities = auth.getAuthorities().stream().toList();
-            AtomicBoolean ok = new AtomicBoolean(false);
-
-            authorities.forEach(a-> {
-                String mainAuthority = a.getAuthority().substring(a.getAuthority().indexOf("/api"));
-                if (matcher.match(mainAuthority,urlPath) && a.getAuthority().contains(methodeType)) {
-                    ok.set(true);
-                }
-            });
-
-            if (ok.get()) {
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
-
-            else {
-                throw new ServletException("not accessable!");
-            }
-
-        }
+//        if (!request.getRequestURI().equals("/api/auth") && !request.getRequestURI().equals("/api/auth/oauth2/jwks")) {
+//
+//            AntPathMatcher matcher = new AntPathMatcher();
+//            String urlPath = request.getRequestURI();
+//            String methodeType = "_" + request.getMethod().toLowerCase() + "_";
+//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//            var authorities = auth.getAuthorities().stream().toList();
+//            AtomicBoolean ok = new AtomicBoolean(false);
+//
+//            authorities.forEach(a-> {
+//                String mainAuthority = a.getAuthority().substring(a.getAuthority().indexOf("/api"));
+//                if (matcher.match(mainAuthority,urlPath) && a.getAuthority().contains(methodeType)) {
+//                    ok.set(true);
+//                }
+//            });
+//
+//            if (ok.get()) {
+//                SecurityContextHolder.getContext().setAuthentication(auth);
+//            }
+//
+//            else {
+//                throw new ServletException("not accessable!");
+//            }
+//
+//        }
 
         if (request.getRequestURI().equals("/api/auth/oauth2/jwks")) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
