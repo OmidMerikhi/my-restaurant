@@ -5,6 +5,7 @@ spring:
     config:
       server:
         git:
-          uri: /home/omid/tamrins/external-config/my-restaurant
+          uri: file:///D:/projects/external-configs/my-restaurant
+#          uri: /home/omid/tamrins/external-config/my-restaurant
 server:
   port: 8888

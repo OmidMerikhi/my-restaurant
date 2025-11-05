@@ -13,7 +13,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          secret-key: my-name-is-omid
+          jwk-set-uri: http://localhost:9090/api/auth/oauth2/jwks
 server:
   port: 8083
 
