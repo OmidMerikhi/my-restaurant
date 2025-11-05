@@ -27,7 +27,7 @@ public class SecurityConfig {
         security.csrf(ServerHttpSecurity.CsrfSpec::disable);
 
         security.authorizeExchange(m -> {
-            m.pathMatchers("/api/auth/refresh", "/api/auth").permitAll();
+            m.pathMatchers("/auth-service/api/auth/refresh", "/auth-service/api/auth").permitAll();
             m.anyExchange().authenticated();
         });
 //        security.oauth2ResourceServer(o -> {
