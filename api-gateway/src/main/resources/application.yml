@@ -16,9 +16,3 @@ spring:
           jwk-set-uri: http://localhost:9090/api/auth/oauth2/jwks
 server:
   port: 8083
-
-app:
-  security:
-    issuer: ${spring.application.name}
-    expire: 36000
-#    secret-key: my name is omid:)

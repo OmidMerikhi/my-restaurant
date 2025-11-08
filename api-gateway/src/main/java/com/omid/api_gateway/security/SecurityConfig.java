@@ -30,43 +30,13 @@ public class SecurityConfig {
             m.pathMatchers("/auth-service/api/auth/refresh", "/auth-service/api/auth").permitAll();
             m.anyExchange().authenticated();
         });
-//        security.oauth2ResourceServer(o -> {
-//            o.jwt(Customizer.withDefaults());
-//        });
+
         security.oauth2ResourceServer(o ->
                 o.jwt(jwt -> jwt.jwtAuthenticationConverter(
                         new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter())
                 )));
         return security.build();
     }
-//
-//    @Bean
-//    public ReactiveJwtDecoder jwtDecoder() {
-//        return NimbusReactiveJwtDecoder.withSecretKey(
-//                new javax.crypto.spec.SecretKeySpec("my-name-is-omid".getBytes(), "HmacSHA256")
-//        ).build();
-//    }
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-//        security.csrf(AbstractHttpConfigurer::disable);
-//        security.oauth2ResourceServer(o -> o.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
-//        security.addFilterAfter(authorizeFilter, ExceptionTranslationFilter.class);
-//        security.authorizeHttpRequests(m -> {
-//            m.anyRequest().authenticated();
-//
-//        });
-//        return security.build();
-//    }
-
-//    private Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
-//        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-//        converter.setAuthoritiesClaimName("authorities");
-//        converter.setAuthorityPrefix("");
-//
-//        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
-//        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
-//        return jwtConverter;
-//    }
 
     @Bean
     public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
