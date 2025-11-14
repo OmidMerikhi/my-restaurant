@@ -3,11 +3,34 @@ server:
 spring:
   application:
     name: food-service
-  config:
-    import: optional:configserver:http://localhost:8888
 
+  config:
+    import: optional:configserver:http://config-server-con:8888
+  #  config:
+#    import: optional:configserver:http://localhost:8888
+#  cloud:
+#    config:
+#      enabled: false
+#    discovery:
+#      enabled: false
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLDialect
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/my_restaurant_food-service
+#    username: omid
+#    password: omid@1999
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:9090/api/auth/oauth2/jwks
+          jwk-set-uri: http://auth-service-con:9090/api/auth/oauth2/jwks
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server-con:8761/eureka

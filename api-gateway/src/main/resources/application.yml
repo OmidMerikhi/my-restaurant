@@ -13,6 +13,10 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:9090/api/auth/oauth2/jwks
+          jwk-set-uri: http://auth-service-con:9090/api/auth/oauth2/jwks
 server:
   port: 8083
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server-con:8761/eureka
