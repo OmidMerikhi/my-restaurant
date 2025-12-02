@@ -27,7 +27,7 @@ public class AuthenticationController {
 
     @PostMapping
     public Map<String, String> login(@RequestParam("username") String username,
-                        @RequestParam("password") String password) {
+                                     @RequestParam("password") String password) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         String accessToken = jwtHandler.generateToken(authentication.getName(),
