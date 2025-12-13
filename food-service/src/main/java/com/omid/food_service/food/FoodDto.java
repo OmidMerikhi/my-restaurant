@@ -14,4 +14,8 @@ public class FoodDto {
     private FoodType foodType;
 
     private String description;
+
+    private Long price;
+
+    private Boolean active;
 }

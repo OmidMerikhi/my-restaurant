@@ -1,6 +1,7 @@
 package com.omid.food_service.food;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,5 @@ public class FoodController {
     public void update(@PathVariable("id") Long id, @RequestBody FoodDto foodDto) {
         foodService.update(id, foodDto);
     }
-
 
 }

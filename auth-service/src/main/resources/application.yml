@@ -2,8 +2,8 @@ spring:
   application:
     name: auth-service
   config:
-    import: optional:configserver:http://config-server-con:8888
-#    import: optional:configserver:http://localhost:8888
+#    import: optional:configserver:http://config-server-con:8888
+    import: optional:configserver:http://localhost:8888
 #    import: optional:configserver:http://config-server-con:8888
 #  data:
 #    redis:
@@ -41,7 +41,7 @@ app:
     expire: 3600000  # 1 ساعت
     privateKeyPath: keys/private_key.pem
     publicKeyPath: keys/public_key.pem
-eureka:
-  client:
-    service-url:
-      defaultZone: http://eureka-server-con:8761/eureka
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://eureka-server-con:8761/eureka

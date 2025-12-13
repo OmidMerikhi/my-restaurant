@@ -19,4 +19,8 @@ public class Food {
 
     private String description;
 
+    private Long price;
+
+    private Boolean active = true;
+
 }

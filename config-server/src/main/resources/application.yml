@@ -5,7 +5,8 @@ spring:
     config:
       server:
         git:
-          uri: ${SPRING_CLOUD_CONFIG_SERVER_GIT_URI:file:///my-restaurant}
+          uri: file:///D:/projects/external-configs/my-restaurant
+#          uri: ${SPRING_CLOUD_CONFIG_SERVER_GIT_URI:file:///my-restaurant}
 #          uri: /home/omid/tamrins/external-config/my-restaurant
 server:
   port: 8888
