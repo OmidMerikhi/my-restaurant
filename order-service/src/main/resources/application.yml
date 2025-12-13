@@ -1,0 +1,17 @@
+
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: order-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9090/api/auth/oauth2/jwks
+#eureka:
+#  client:
+#    service-url:
+server:
+  port: 8180
+#      defaultZone: http://eureka-server-con:8761/eureka
