@@ -12,6 +12,7 @@ import com.omid.auth_service.role.RoleService;
 import com.omid.auth_service.user.User;
 import com.omid.auth_service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,8 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 import com.nimbusds.jose.jwk.*;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
@@ -49,6 +52,9 @@ public class SecurityConfig {
     private final RSAPublicKey publicKey;
     private final RSAPrivateKey privateKey;
     private final KeyManager keyManager;
+
+    @Value("${app.security.keys-dir}")
+    private Path keysDir;
 //    @Bean
 //    public CommandLineRunner commandLineRunner(AuthorityService authorityService, RoleService roleService, UserService userService) {
 //        return args -> {
@@ -88,7 +94,7 @@ public class SecurityConfig {
         security.addFilterAfter(authorizeFilter, JwtAuthenticationFilter.class);
         security.authorizeHttpRequests(m-> {
            m.requestMatchers("/api/auth/login", "/api/auth/oauth2/jwks").permitAll();
-           m.requestMatchers("/api/auth/revoke").hasAuthority("my_restaurant__post_/api/foods").requestMatchers("/api/auth/revoke","/api/auth/load-black-list","/api/auth/key-rotation","/api/auth/load-all-keys").permitAll();
+           m.requestMatchers("/api/auth/revoke").hasAuthority("my_restaurant__post_/api/foods").requestMatchers("/api/auth/revoke","/api/auth/load-black-list","/api/auth/key-rotation").permitAll();
 //           m.requestMatchers("/api/test/hi").hasAuthority("insert").requestMatchers("/api/test/hi").permitAll();
 //           m.requestMatchers("/api/test/hello").hasAuthority("select").requestMatchers("/api/test/hello").permitAll();
            m.anyRequest().authenticated();
@@ -96,17 +102,40 @@ public class SecurityConfig {
         return security.build();
     }
 
+//    @Bean
+//    public RSAKey rsaKey() {
+//        return new RSAKey.Builder(publicKey)
+//                .privateKey(privateKey)
+//                .keyID("my-name-is-omid")
+//                .build();
+//    }
+
     @Bean
-    public RSAKey rsaKey() {
+    public RSAKey rsaKey() throws Exception {
+        // بارگذاری کلیدها از filesystem
+        RSAPrivateKey privateKey = RsaKeyConverters.pkcs8()
+                .convert(Files.newInputStream(privateKeyPath()));
+
+        RSAPublicKey publicKey = RsaKeyConverters.x509()
+                .convert(Files.newInputStream(publicKeyPath()));
+
         return new RSAKey.Builder(publicKey)
                 .privateKey(privateKey)
                 .keyID("my-name-is-omid")
                 .build();
     }
 
+    private Path privateKeyPath() {
+        return keysDir.resolve("private_key.pem");
+    }
+
+    private Path publicKeyPath() {
+        return keysDir.resolve("public_key.pem");
+    }
+
     @Bean
-    public JWKSet jwkSet(KeyManager keyManager) {
-        return new JWKSet(new ArrayList<>(keyManager.getAllKeys().values()));
+    public JWKSet jwkSet(RSAKey rsaKey) throws Exception {
+        return new JWKSet(rsaKey);
     }
 
 

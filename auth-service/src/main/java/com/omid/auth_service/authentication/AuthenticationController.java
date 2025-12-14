@@ -64,10 +64,10 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping("/load-all-keys")
-    public Map<String, RSAKey> loadAllKeys() {
-        return keyManager.getAllKeys();
-    }
+//    @GetMapping("/load-all-keys")
+//    public Map<String, RSAKey> loadAllKeys() {
+//        return keyManager.getAllKeys();
+//    }
 
 //    @PostMapping("/refresh")
 //    public ResponseEntity<?> refresh(@RequestParam("refresh-token") String refreshToken) {

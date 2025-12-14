@@ -19,9 +19,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -34,14 +32,14 @@ public class KeyManager {
     private volatile RSAKey activeKey;
     private final Map<String, RSAKey> oldKeys = new ConcurrentHashMap<>();
 
-    @PostConstruct
-    public void init() throws Exception {
-        if (Files.exists(privateKeyPath()) && Files.exists(publicKeyPath())) {
-            this.activeKey = loadKeyFromFiles("key-initial");
-        } else {
-            rotateKeys(); // اگر کلیدها موجود نبود، تولید اولیه
-        }
-    }
+//    @PostConstruct
+//    public void init() throws Exception {
+//        if (Files.exists(privateKeyPath()) && Files.exists(publicKeyPath())) {
+//            this.activeKey = loadKeyFromFiles("key-initial");
+//        } else {
+//            rotateKeys(); // اگر کلیدها موجود نبود، تولید اولیه
+//        }
+//    }
 
     public RSAKey loadKeyFromFiles(String keyId) throws Exception {
         // بارگذاری کلیدها از filesystem
@@ -95,11 +93,9 @@ public class KeyManager {
         return keysDir.resolve("public_key.pem");
     }
 
-    public Map<String, RSAKey> getAllKeys() {
-        Map<String, RSAKey> map = new HashMap<>(oldKeys);
-        if (activeKey != null) {
-            map.put(activeKey.getKeyID(), activeKey);
-        }
-        return map;
-    }
+//    public List<RSAKey> getAllKeys() {
+//        List<RSAKey> keys = new ArrayList<>(oldKeys.values());
+//        keys.add(activeKey);
+//        return keys;
+//    }
 }
