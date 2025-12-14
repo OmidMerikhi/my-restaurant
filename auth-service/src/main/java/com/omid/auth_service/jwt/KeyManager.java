@@ -5,12 +5,16 @@ import com.omid.auth_service.util.PemUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.converter.RsaKeyConverters;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -23,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @RequiredArgsConstructor
 public class KeyManager {
-    private final Path privateKeyPath = Paths.get("src/main/resources/keys/private_key.pem");
-    private final Path publicKeyPath  = Paths.get("src/main/resources/keys/public_key.pem");
+    @Value("${app.security.keys-dir}")
+    private Path keysDir;
 
     @Getter
     private volatile RSAKey activeKey;
@@ -32,46 +36,70 @@ public class KeyManager {
 
     @PostConstruct
     public void init() throws Exception {
-        this.activeKey = loadKeyFromFiles("key-initial");
+        if (Files.exists(privateKeyPath()) && Files.exists(publicKeyPath())) {
+            this.activeKey = loadKeyFromFiles("key-initial");
+        } else {
+            rotateKeys(); // اگر کلیدها موجود نبود، تولید اولیه
+        }
     }
 
     public RSAKey loadKeyFromFiles(String keyId) throws Exception {
+        // بارگذاری کلیدها از filesystem
         RSAPrivateKey privateKey = RsaKeyConverters.pkcs8()
-                .convert(Files.newInputStream(privateKeyPath));
+                .convert(Files.newInputStream(privateKeyPath()));
 
         RSAPublicKey publicKey = RsaKeyConverters.x509()
-                .convert(Files.newInputStream(publicKeyPath));
+                .convert(Files.newInputStream(publicKeyPath()));
 
-        return new com.nimbusds.jose.jwk.RSAKey.Builder(publicKey)
+        return new RSAKey.Builder(publicKey)
                 .privateKey(privateKey)
                 .keyID(keyId)
                 .build();
     }
 
     public synchronized void rotateKeys() throws Exception {
-
-        // کلید قبلی را نگه می‌داریم
-        oldKeys.put(activeKey.getKeyID(), activeKey);
+        if (activeKey != null) {
+            oldKeys.put(activeKey.getKeyID(), activeKey);
+        }
 
         // تولید کلید جدید
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
         gen.initialize(2048);
         KeyPair pair = gen.generateKeyPair();
 
-        // تبدیل به PEM و ذخیره در فایل
+        // تبدیل به PEM استاندارد
         String privatePem = PemUtil.toPrivatePem(pair.getPrivate());
         String publicPem  = PemUtil.toPublicPem(pair.getPublic());
 
-        Files.writeString(privateKeyPath, privatePem);
-        Files.writeString(publicKeyPath, publicPem);
+        // ذخیره روی filesystem
+        Files.writeString(privateKeyPath(), privatePem,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.writeString(publicKeyPath(), publicPem,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-        // کلید جدید را بارگذاری کنیم
-        this.activeKey = loadKeyFromFiles(UUID.randomUUID().toString());
+        // بارگذاری کلید جدید
+        RSAPrivateKey privateKey = RsaKeyConverters.pkcs8().convert(Files.newInputStream(privateKeyPath()));
+        RSAPublicKey publicKey = RsaKeyConverters.x509().convert(Files.newInputStream(publicKeyPath()));
+
+        this.activeKey = new RSAKey.Builder(publicKey)
+                .privateKey(privateKey)
+                .keyID(UUID.randomUUID().toString())
+                .build();
+    }
+
+    private Path privateKeyPath() {
+        return keysDir.resolve("private_key.pem");
+    }
+
+    private Path publicKeyPath() {
+        return keysDir.resolve("public_key.pem");
     }
 
     public Map<String, RSAKey> getAllKeys() {
         Map<String, RSAKey> map = new HashMap<>(oldKeys);
-        map.put(activeKey.getKeyID(), activeKey);
+        if (activeKey != null) {
+            map.put(activeKey.getKeyID(), activeKey);
+        }
         return map;
     }
 }

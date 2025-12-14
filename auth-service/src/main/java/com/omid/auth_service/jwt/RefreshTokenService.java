@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -15,7 +17,29 @@ public class RefreshTokenService {
     private final StringRedisTemplate redisTemplate;
     private final JwtHandler jwtHandler;
 
-    private final long refreshTokenValidity = 7 * 24 * 60 * 60; // 7 روز بر حسب ثانیه
+//    private final long refreshTokenValidity = 7 * 24 * 60 * 60; // 7 روز بر حسب ثانیه
+
+    public boolean isBlacklisted(String jti) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(jti));
+    }
+
+    public void revokeToken(String token) {
+        DecodedJWT decodedToken = jwtHandler.verifyToken(token);
+        redisTemplate.opsForValue().set(decodedToken.getId(), "black-token", 31536000, TimeUnit.SECONDS);
+    }
+
+    public List<String> loadBlackList() {
+        Set<String> keys = redisTemplate.keys("*");
+        List<String> blackList = new ArrayList<>();
+        for (String key : keys) {
+            String value = redisTemplate.opsForValue().get(key);
+            if ("black-token".equals(value)) {
+                blackList.add(key);
+            }
+        }
+        return blackList;
+    }
+
 
 //    public String createRefreshToken() {
 //        String refreshToken = UUID.randomUUID().toString();
@@ -40,15 +64,6 @@ public class RefreshTokenService {
 //        redisTemplate.delete(refreshToken);
 //    }
 
-    public boolean isBlacklisted(String jti) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(jti));
-    }
-
-    public void revokeToken(String token) {
-        DecodedJWT decodedToken = jwtHandler.verifyToken(token);
-        redisTemplate.opsForValue().set(decodedToken.getId(), "black-token", 31536000, TimeUnit.SECONDS);
-    }
-
 //    public ResponseEntity<?> rotationToken(String refreshToken, long expirationInSeconds) {
 //
 //        redisTemplate.opsForValue().set(refreshToken, "blacklisted", expirationInSeconds, TimeUnit.SECONDS);
@@ -61,12 +76,5 @@ public class RefreshTokenService {
 //        ));
 //    }
 
-
-
-
-    // revocation token
-    //fix rotation token
-    //add redis black list validation to jwt authentication class
-    //add redis black list validation to resource server other services
 
 }

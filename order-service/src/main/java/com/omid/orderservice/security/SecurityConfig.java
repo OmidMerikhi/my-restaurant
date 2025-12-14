@@ -13,31 +13,59 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthorizeFilter authorizeFilter;
+    private final DebugHeaderFilter debugHeaderFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        security.csrf(AbstractHttpConfigurer::disable);
-        security.oauth2ResourceServer(o-> o.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
-        security.addFilterAfter(authorizeFilter, ExceptionTranslationFilter.class);
-        security.authorizeHttpRequests(m-> {
-            m.anyRequest().authenticated();
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            BlacklistAwareJwtAuthenticationConverter converter
+    ) throws Exception {
 
-        });
-        return security.build();
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt ->
+                                jwt.jwtAuthenticationConverter(converter)
+                        )
+                );
+
+        return http.build();
     }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity security,
+//                                                   BlacklistAwareJwtAuthenticationConverter converter) throws Exception {
+//        security.csrf(AbstractHttpConfigurer::disable);
+//
+//        // ✅ درست‌ترین نقطه برای Debug قبل از JWT
+//        security.addFilterBefore(debugHeaderFilter, SecurityContextHolderFilter.class);
+//
+//        security.oauth2ResourceServer(o ->
+//                o.jwt(jwt -> jwt.jwtAuthenticationConverter(converter))
+//        );
+//
+//        security.addFilterAfter(authorizeFilter, ExceptionTranslationFilter.class);
+//
+//        security.authorizeHttpRequests(m -> m.anyRequest().authenticated());
+//
+//        return security.build();
+//    }
 
-    private Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-        converter.setAuthoritiesClaimName("authorities");
-        converter.setAuthorityPrefix("");
-
-        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
-        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
-        return jwtConverter;
-    }
+//    private Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
+//        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
+//        converter.setAuthoritiesClaimName("authorities");
+//        converter.setAuthorityPrefix("");
+//
+//        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+//        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
+//        return jwtConverter;
+//    }
 }

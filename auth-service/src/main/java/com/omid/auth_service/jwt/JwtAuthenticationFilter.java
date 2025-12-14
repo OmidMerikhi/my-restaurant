@@ -23,8 +23,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        doBefore(request, response);
-        filterChain.doFilter(request, response);
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String finalToken = token.substring("Bearer".length()).trim();
+
+        try {
+            DecodedJWT verifiedToken = jwtHandler.verifyToken(finalToken);
+
+            if (refreshTokenService.isBlacklisted(verifiedToken.getId())) {
+                throw new ServletException("Token is blacklisted");
+            }
+
+            SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(
+                            verifiedToken.getSubject(),
+                            null,
+                            verifiedToken.getClaim("authorities").asList(Authority.class))
+            );
+
+            filterChain.doFilter(request, response);
+
+        } catch (Exception ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"" + ex.getMessage() + "\"}");
+            response.getWriter().flush();
+        }
     }
 
     private void doBefore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

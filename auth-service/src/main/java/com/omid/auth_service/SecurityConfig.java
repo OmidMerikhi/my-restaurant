@@ -87,7 +87,8 @@ public class SecurityConfig {
         security.addFilterAfter(authenticationFilter, ExceptionTranslationFilter.class);
         security.addFilterAfter(authorizeFilter, JwtAuthenticationFilter.class);
         security.authorizeHttpRequests(m-> {
-           m.requestMatchers("/api/auth", "/api/auth/oauth2/jwks", "/api/auth/refresh").permitAll();
+           m.requestMatchers("/api/auth/login", "/api/auth/oauth2/jwks").permitAll();
+           m.requestMatchers("/api/auth/revoke").hasAuthority("my_restaurant__post_/api/foods").requestMatchers("/api/auth/revoke","/api/auth/load-black-list","/api/auth/key-rotation","/api/auth/load-all-keys").permitAll();
 //           m.requestMatchers("/api/test/hi").hasAuthority("insert").requestMatchers("/api/test/hi").permitAll();
 //           m.requestMatchers("/api/test/hello").hasAuthority("select").requestMatchers("/api/test/hello").permitAll();
            m.anyRequest().authenticated();
