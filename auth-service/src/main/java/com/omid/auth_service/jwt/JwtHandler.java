@@ -3,7 +3,6 @@ package com.omid.auth_service.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.nimbusds.jose.jwk.RSAKey;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Component
@@ -40,9 +40,6 @@ public class JwtHandler {
 
     @Autowired
     private RSAPublicKey publicKey;
-
-    @Autowired
-    private KeyManager keyManager;
 
 //    @PostConstruct
 //    public void initKeys() throws Exception {
@@ -68,20 +65,14 @@ public class JwtHandler {
 //    }
 
     public String generateToken(String username, String[] authorities) {
-        try {
-            RSAKey key = keyManager.getActiveKey();
-            return JWT.create()
-                    .withIssuer(issuer)
-                    .withSubject(username)
-                    .withArrayClaim("authorities", authorities)
-                    .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(new Date().getTime() + expire))
-                    .sign(Algorithm.RSA256(null, (RSAPrivateKey) key.toPrivateKey()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
+        return JWT.create()
+                .withIssuer(issuer)
+                .withSubject(username)
+                .withArrayClaim("authorities", authorities)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(new Date().getTime() + expire))
+                .withJWTId(UUID.randomUUID().toString())
+                .sign(Algorithm.RSA256(null, privateKey));
     }
 
 
