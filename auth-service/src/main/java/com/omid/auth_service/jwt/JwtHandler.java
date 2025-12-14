@@ -21,6 +21,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Component
@@ -70,6 +71,7 @@ public class JwtHandler {
                 .withArrayClaim("authorities", authorities)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(new Date().getTime() + expire))
+                .withJWTId(UUID.randomUUID().toString())
                 .sign(Algorithm.RSA256(null, privateKey));
     }
 

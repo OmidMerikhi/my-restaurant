@@ -19,6 +19,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtHandler jwtHandler;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -36,6 +37,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String finalToken = token.substring("Bearer".length()).trim();
 
         DecodedJWT verifiedToken = jwtHandler.verifyToken(finalToken);
+
+        if (refreshTokenService.isBlacklisted(verifiedToken.getId())) {
+            throw new ServletException("Token is blacklisted");
+        }
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(verifiedToken.getSubject(), null, verifiedToken.getClaim("authorities").asList(Authority.class))
