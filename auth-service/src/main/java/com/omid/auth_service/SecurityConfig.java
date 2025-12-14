@@ -6,6 +6,7 @@ import com.omid.auth_service.authority.Authority;
 import com.omid.auth_service.authority.AuthorityService;
 import com.omid.auth_service.jwt.AuthorizeFilter;
 import com.omid.auth_service.jwt.JwtAuthenticationFilter;
+import com.omid.auth_service.jwt.KeyManager;
 import com.omid.auth_service.role.Role;
 import com.omid.auth_service.role.RoleService;
 import com.omid.auth_service.user.User;
@@ -33,6 +34,7 @@ import java.security.KeyPairGenerator;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
 import java.util.Set;
 
 @Configuration
@@ -46,6 +48,7 @@ public class SecurityConfig {
 
     private final RSAPublicKey publicKey;
     private final RSAPrivateKey privateKey;
+    private final KeyManager keyManager;
 //    @Bean
 //    public CommandLineRunner commandLineRunner(AuthorityService authorityService, RoleService roleService, UserService userService) {
 //        return args -> {
@@ -101,9 +104,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JWKSet jwkSet(RSAKey rsaKey) {
-        return new JWKSet(rsaKey);
+    public JWKSet jwkSet(KeyManager keyManager) {
+        return new JWKSet(new ArrayList<>(keyManager.getAllKeys().values()));
     }
+
 
 
 

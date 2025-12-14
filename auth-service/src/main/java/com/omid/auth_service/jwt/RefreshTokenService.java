@@ -36,4 +36,10 @@ public class RefreshTokenService {
         redisTemplate.delete(refreshToken);
     }
 
+
+    // revocation token
+    //fix rotation token
+    //add redis black list validation to jwt authentication class
+    //add redis black list validation to resource server other services
+
 }

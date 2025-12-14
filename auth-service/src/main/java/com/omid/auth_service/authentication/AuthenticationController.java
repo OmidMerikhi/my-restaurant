@@ -40,7 +40,7 @@ public class AuthenticationController {
         );
     }
 
-    @PostMapping("/refresh")
+    @PostMapping("/token-rotation")
     public ResponseEntity<?> refresh(@RequestParam("refresh-token") String refreshToken) {
         String oldRefreshToken = refreshToken;
 
@@ -71,4 +71,7 @@ public class AuthenticationController {
     public Map<String, Object> keys() {
         return jwkSet.toJSONObject();
     }
+
+//    @PostMapping("key-rotation")
+//    public
 }
