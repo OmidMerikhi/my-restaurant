@@ -3,7 +3,7 @@ package com.omid.auth_service.authentication;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.omid.auth_service.jwt.JwtHandler;
-import com.omid.auth_service.jwt.KeyManager;
+//import com.omid.auth_service.jwt.KeyManager;
 import com.omid.auth_service.jwt.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class AuthenticationController {
     private final JwtHandler jwtHandler;
     private final JWKSet jwkSet;
     private final RefreshTokenService refreshTokenService;
-    private final KeyManager keyManager;
+//    private final KeyManager keyManager;
 
     @PostMapping("/login")
     public String login(@RequestParam("username") String username,
@@ -55,14 +55,14 @@ public class AuthenticationController {
         return refreshTokenService.loadBlackList();
     }
 
-    @PostMapping("/key-rotation")
-    public void keRotation() {
-        try {
-            keyManager.rotateKeys();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    @PostMapping("/key-rotation")
+//    public void keRotation() {
+//        try {
+//            keyManager.rotateKeys();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 //    @GetMapping("/load-all-keys")
 //    public Map<String, RSAKey> loadAllKeys() {

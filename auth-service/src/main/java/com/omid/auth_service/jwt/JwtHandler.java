@@ -3,6 +3,7 @@ package com.omid.auth_service.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.nimbusds.jose.jwk.RSAKey;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,8 @@ public class JwtHandler {
     private long expire;
 //    private String privateKeyPath;
 //    private String publicKeyPath;
+    @Autowired
+    private RSAKey rsaKey;
 
     @Autowired
     private RSAPrivateKey privateKey;
@@ -65,12 +68,14 @@ public class JwtHandler {
 //    }
 
     public String generateToken(String username, String[] authorities) {
+        String keyId = rsaKey.getKeyID();
         return JWT.create()
                 .withIssuer(issuer)
                 .withSubject(username)
                 .withArrayClaim("authorities", authorities)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(new Date().getTime() + expire))
+                .withKeyId(keyId)
                 .withJWTId(UUID.randomUUID().toString())
                 .sign(Algorithm.RSA256(null, privateKey));
     }

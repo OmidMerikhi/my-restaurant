@@ -6,7 +6,7 @@ import com.omid.auth_service.authority.Authority;
 import com.omid.auth_service.authority.AuthorityService;
 import com.omid.auth_service.jwt.AuthorizeFilter;
 import com.omid.auth_service.jwt.JwtAuthenticationFilter;
-import com.omid.auth_service.jwt.KeyManager;
+//import com.omid.auth_service.jwt.KeyManager;
 import com.omid.auth_service.role.Role;
 import com.omid.auth_service.role.RoleService;
 import com.omid.auth_service.user.User;
@@ -51,10 +51,10 @@ public class SecurityConfig {
 
     private final RSAPublicKey publicKey;
     private final RSAPrivateKey privateKey;
-    private final KeyManager keyManager;
+//    private final KeyManager keyManager;
 
-    @Value("${app.security.keys-dir}")
-    private Path keysDir;
+//    @Value("${app.security.keys-dir}")
+//    private Path keysDir;
 //    @Bean
 //    public CommandLineRunner commandLineRunner(AuthorityService authorityService, RoleService roleService, UserService userService) {
 //        return args -> {
@@ -110,33 +110,30 @@ public class SecurityConfig {
 //                .build();
 //    }
 
-    @Bean
-    public RSAKey rsaKey() throws Exception {
-        // بارگذاری کلیدها از filesystem
-        RSAPrivateKey privateKey = RsaKeyConverters.pkcs8()
-                .convert(Files.newInputStream(privateKeyPath()));
+//    @Bean
+//    public RSAKey rsaKey() throws Exception {
+//        // بارگذاری کلیدها از filesystem
+//        RSAPrivateKey privateKey = RsaKeyConverters.pkcs8()
+//                .convert(Files.newInputStream(privateKeyPath()));
+//
+//        RSAPublicKey publicKey = RsaKeyConverters.x509()
+//                .convert(Files.newInputStream(publicKeyPath()));
+//
+//        return new RSAKey.Builder(publicKey)
+//                .privateKey(privateKey)
+//                .keyID("my-name-is-omid")
+//                .build();
+//    }
 
-        RSAPublicKey publicKey = RsaKeyConverters.x509()
-                .convert(Files.newInputStream(publicKeyPath()));
+//    private Path privateKeyPath() {
+//        return keysDir.resolve("private_key.pem");
+//    }
+//
+//    private Path publicKeyPath() {
+//        return keysDir.resolve("public_key.pem");
+//    }
 
-        return new RSAKey.Builder(publicKey)
-                .privateKey(privateKey)
-                .keyID("my-name-is-omid")
-                .build();
-    }
 
-    private Path privateKeyPath() {
-        return keysDir.resolve("private_key.pem");
-    }
-
-    private Path publicKeyPath() {
-        return keysDir.resolve("public_key.pem");
-    }
-
-    @Bean
-    public JWKSet jwkSet(RSAKey rsaKey) throws Exception {
-        return new JWKSet(rsaKey);
-    }
 
 
 

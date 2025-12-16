@@ -55,25 +55,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.getWriter().flush();
         }
     }
-
-    private void doBefore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (token == null || !token.startsWith("Bearer ")) {
-            return;
-        }
-
-        String finalToken = token.substring("Bearer".length()).trim();
-
-        DecodedJWT verifiedToken = jwtHandler.verifyToken(finalToken);
-
-        if (refreshTokenService.isBlacklisted(verifiedToken.getId())) {
-            throw new ServletException("Token is blacklisted");
-        }
-
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(verifiedToken.getSubject(), null, verifiedToken.getClaim("authorities").asList(Authority.class))
-        );
-
-    }
 }

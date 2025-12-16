@@ -19,12 +19,21 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthorizeFilter authorizeFilter;
+    private final JwtAutheticationFilter jwtAutheticationFilter;
+//    private final DebugHeaderFilter debugHeaderFilter;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
         security.csrf(AbstractHttpConfigurer::disable);
-        security.oauth2ResourceServer(o-> o.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
-        security.addFilterAfter(authorizeFilter, ExceptionTranslationFilter.class);
+        security.oauth2ResourceServer(o ->
+                o.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+        );
+        security.addFilterAfter(
+                jwtAutheticationFilter,
+                ExceptionTranslationFilter.class
+        );
+        security.addFilterAfter(authorizeFilter, JwtAutheticationFilter.class);
         security.authorizeHttpRequests(m-> {
             m.anyRequest().authenticated();
 

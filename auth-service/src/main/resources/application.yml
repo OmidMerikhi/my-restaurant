@@ -38,8 +38,10 @@ server:
 app:
   security:
     issuer: ${spring.application.name}
-    expire: 60000
-    keys-dir: file:///D:/projects/keys/my-restaurant
+    expire: 600000
+#    keys-dir: file:///D:/projects/keys/my-restaurant
+    privateKeyPath: keys/private_key.pem
+    publicKeyPath: keys/public_key.pem
 
 #eureka:
 #  client:
