@@ -35,14 +35,21 @@ public class JwtHandler {
     private long expire;
 //    private String privateKeyPath;
 //    private String publicKeyPath;
+//    @Autowired
+//    private RSAKey rsaKey;
+//
+//    @Autowired
+//    private RSAPrivateKey privateKey;
+//
+//    @Autowired
+//    private RSAPublicKey publicKey;
     @Autowired
-    private RSAKey rsaKey;
+    private KeyConfig keyConfig;
 
     @Autowired
-    private RSAPrivateKey privateKey;
+    private KeyService keyService;
 
-    @Autowired
-    private RSAPublicKey publicKey;
+
 
 //    @PostConstruct
 //    public void initKeys() throws Exception {
@@ -67,8 +74,8 @@ public class JwtHandler {
 //        }
 //    }
 
-    public String generateToken(String username, String[] authorities) {
-        String keyId = rsaKey.getKeyID();
+    public String generateToken(String username, String[] authorities) throws Exception {
+        String keyId = keyService.activeKey().getKeyID();
         return JWT.create()
                 .withIssuer(issuer)
                 .withSubject(username)
@@ -77,7 +84,7 @@ public class JwtHandler {
                 .withExpiresAt(new Date(new Date().getTime() + expire))
                 .withKeyId(keyId)
                 .withJWTId(UUID.randomUUID().toString())
-                .sign(Algorithm.RSA256(null, privateKey));
+                .sign(Algorithm.RSA256(null, keyConfig.privateKey()));
     }
 
 
@@ -85,8 +92,8 @@ public class JwtHandler {
 //        return JWT.require(Algorithm.HMAC256(secretKey)).withIssuer(issuer).build().verify(token);
 //    }
 
-    public DecodedJWT verifyToken(String token) {
-        return JWT.require(Algorithm.RSA256(publicKey, null))
+    public DecodedJWT verifyToken(String token) throws Exception {
+        return JWT.require(Algorithm.RSA256(keyConfig.publicKey(), null))
                 .withIssuer(issuer)
                 .build()
                 .verify(token);

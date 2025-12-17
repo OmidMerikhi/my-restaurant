@@ -49,8 +49,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter authenticationFilter;
     private final AuthorizeFilter authorizeFilter;
 
-    private final RSAPublicKey publicKey;
-    private final RSAPrivateKey privateKey;
+//    private final RSAPublicKey publicKey;
+//    private final RSAPrivateKey privateKey;
 //    private final KeyManager keyManager;
 
 //    @Value("${app.security.keys-dir}")
@@ -95,47 +95,8 @@ public class SecurityConfig {
         security.authorizeHttpRequests(m-> {
            m.requestMatchers("/api/auth/login", "/api/auth/oauth2/jwks").permitAll();
            m.requestMatchers("/api/auth/revoke").hasAuthority("my_restaurant__post_/api/foods").requestMatchers("/api/auth/revoke","/api/auth/load-black-list","/api/auth/key-rotation").permitAll();
-//           m.requestMatchers("/api/test/hi").hasAuthority("insert").requestMatchers("/api/test/hi").permitAll();
-//           m.requestMatchers("/api/test/hello").hasAuthority("select").requestMatchers("/api/test/hello").permitAll();
            m.anyRequest().authenticated();
         });
         return security.build();
     }
-
-//    @Bean
-//    public RSAKey rsaKey() {
-//        return new RSAKey.Builder(publicKey)
-//                .privateKey(privateKey)
-//                .keyID("my-name-is-omid")
-//                .build();
-//    }
-
-//    @Bean
-//    public RSAKey rsaKey() throws Exception {
-//        // بارگذاری کلیدها از filesystem
-//        RSAPrivateKey privateKey = RsaKeyConverters.pkcs8()
-//                .convert(Files.newInputStream(privateKeyPath()));
-//
-//        RSAPublicKey publicKey = RsaKeyConverters.x509()
-//                .convert(Files.newInputStream(publicKeyPath()));
-//
-//        return new RSAKey.Builder(publicKey)
-//                .privateKey(privateKey)
-//                .keyID("my-name-is-omid")
-//                .build();
-//    }
-
-//    private Path privateKeyPath() {
-//        return keysDir.resolve("private_key.pem");
-//    }
-//
-//    private Path publicKeyPath() {
-//        return keysDir.resolve("public_key.pem");
-//    }
-
-
-
-
-
-
 }

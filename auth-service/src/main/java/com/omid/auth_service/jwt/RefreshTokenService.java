@@ -23,7 +23,7 @@ public class RefreshTokenService {
         return Boolean.TRUE.equals(redisTemplate.hasKey(jti));
     }
 
-    public void revokeToken(String token) {
+    public void revokeToken(String token) throws Exception {
         DecodedJWT decodedToken = jwtHandler.verifyToken(token);
         redisTemplate.opsForValue().set(decodedToken.getId(), "black-token", 31536000, TimeUnit.SECONDS);
     }
